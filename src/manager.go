@@ -6,6 +6,13 @@ import (
 	"github.com/boltdb/bolt"
 )
 
+// Note represents an active note in the DB
+type Note struct {
+	ID        int
+	Timestamp time.Time
+	Text      string
+}
+
 // NotesConnection maintains a connection to the DB
 type NotesConnection struct {
 	CreateNote      func(text string) (*Note, error)

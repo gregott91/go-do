@@ -6,12 +6,12 @@ import (
 )
 
 // GenerateApplication generates the tview Application
-func GenerateApplication() *tview.Application {
-	return tview.NewApplication()
+func GenerateApplication() Application {
+	return WrapApplication(tview.NewApplication())
 }
 
 // GenerateGridWithHeader generates the tview Grid with a single header row
-func GenerateGridWithHeader(rowCount int, columnCount int, border bool) *tview.Grid {
+func GenerateGridWithHeader(rowCount int, columnCount int, border bool) Grid {
 	rows := []int{1}
 	for i := 1; i < rowCount; i++ {
 		rows = append(rows, i)
@@ -22,31 +22,48 @@ func GenerateGridWithHeader(rowCount int, columnCount int, border bool) *tview.G
 		columns = append(columns, i)
 	}
 
-	return tview.NewGrid().
-		SetRows(rows...).
-		SetColumns(columns...).
-		SetBorders(border)
+	return WrapGrid(
+		tview.NewGrid().
+			SetRows(rows...).
+			SetColumns(columns...).
+			SetBorders(border))
 }
 
 // GenerateLabel generates a tview Primitive from a string
-func GenerateLabel(text string) tview.Primitive {
-	return tview.NewTextView().
-		SetTextAlign(tview.AlignCenter).
-		SetText(text)
+func GenerateLabel(text string) Label {
+	return WrapLabel(
+		tview.NewTextView().
+			SetTextAlign(tview.AlignCenter).
+			SetText(text))
 }
 
-// AddToGrid adds a value to a grid
-func AddToGrid(grid *tview.Grid, row int, column int, item tview.Primitive) {
-	grid.AddItem(item, row, column, 1, 1, 0, 0, false)
+// AddLabelToGrid adds a value to a grid
+func AddLabelToGrid(grid Grid, row int, column int, item *Label) {
+	grid.Inner.AddItem(item.Inner, row, column, 1, 1, 0, 0, false)
+}
+
+// AddInputToGrid adds a value to a grid
+func AddInputToGrid(grid Grid, row int, column int, item *InputField) {
+	grid.Inner.AddItem(item.Inner, row, column, 1, 1, 0, 0, false)
+}
+
+// AddTableToGrid adds a value to a grid
+func AddTableToGrid(grid Grid, row int, column int, item *Table) {
+	grid.Inner.AddItem(item.Inner, row, column, 1, 1, 0, 0, false)
+}
+
+// AddGridToGrid adds a value to a grid
+func AddGridToGrid(grid Grid, row int, column int, item *Grid) {
+	grid.Inner.AddItem(item.Inner, row, column, 1, 1, 0, 0, false)
 }
 
 // SetupUI confiugures the root and focus of the TUI
-func SetupUI(app *tview.Application, root tview.Primitive, focus tview.Primitive) error {
-	return app.SetRoot(root, true).SetFocus(focus).Run()
+func SetupUI(app Application, root Grid, focus InputField) error {
+	return app.Inner.SetRoot(root.Inner, true).SetFocus(focus.Inner).Run()
 }
 
 // GenerateInput generates an input field
-func GenerateInput(label string, enterFunc func(input *tview.InputField), closeFunc func()) *tview.InputField {
+func GenerateInput(label string, enterFunc func(input InputField), closeFunc func()) InputField {
 	input := tview.NewInputField().
 		SetLabel(label).
 		SetFieldBackgroundColor(tcell.ColorBlack)
@@ -54,17 +71,17 @@ func GenerateInput(label string, enterFunc func(input *tview.InputField), closeF
 	handleInputDone := func(key tcell.Key) {
 		switch key {
 		case tcell.KeyEnter:
-			enterFunc(input)
+			enterFunc(WrapInputField(input))
 		case tcell.KeyEscape:
 			closeFunc()
 		}
 	}
 
-	return input.SetDoneFunc(handleInputDone)
+	return WrapInputField(input.SetDoneFunc(handleInputDone))
 }
 
 // GenerateTable generates a tview Table
-func GenerateTable() *tview.Table {
+func GenerateTable() Table {
 	table := tview.NewTable().
 		SetBorders(false)
 
@@ -76,31 +93,31 @@ func GenerateTable() *tview.Table {
 			table.SetSelectable(false, false)
 		})
 
-	return table
+	return WrapTable(table)
 }
 
 // AppendRowToTable adds a row to a tview Table
-func AppendRowToTable(table *tview.Table, rowValues ...string) {
-	row := table.GetRowCount()
+func AppendRowToTable(table Table, rowValues ...string) {
+	row := table.Inner.GetRowCount()
 
 	setRowCells(table, row, rowValues...)
 }
 
 // PrependRowToTable adds a value to a tview Table
-func PrependRowToTable(table *tview.Table, rowValues ...string) {
-	table.InsertRow(0)
+func PrependRowToTable(table Table, rowValues ...string) {
+	table.Inner.InsertRow(0)
 
 	setRowCells(table, 0, rowValues...)
 }
 
-func setRowCells(table *tview.Table, row int, rowValues ...string) {
+func setRowCells(table Table, row int, rowValues ...string) {
 	for column, cell := range rowValues {
 		setTableCell(table, row, column, cell)
 	}
 }
 
-func setTableCell(table *tview.Table, row int, column int, text string) {
-	table.SetCell(row, column,
+func setTableCell(table Table, row int, column int, text string) {
+	table.Inner.SetCell(row, column,
 		tview.NewTableCell(text).
 			SetTextColor(tcell.ColorWhite))
 }

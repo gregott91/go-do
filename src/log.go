@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	logName = "debug"
+	logName = "debug.log"
 )
 
 // InitializeLogging sets up debug file logging
