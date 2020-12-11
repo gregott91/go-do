@@ -9,7 +9,7 @@ func ConfigureUI(conn *NotesConnection) error {
 	app := GenerateApplication()
 
 	// todo handle error
-	previousNotesTable, _ := GenerateTable().
+	previousNotesTable, _ := GenerateTable(WrapperColorOlive).
 		populatePreviousNotesTable(conn)
 
 	previousNotesGrid := GenerateGridWithHeader(1, 1, false)
@@ -45,7 +45,7 @@ func (table Table) populatePreviousNotesTable(conn *NotesConnection) (Table, err
 
 func getRowFromNote(note *Note) []string {
 	return []string{
-		note.Timestamp.Format(time.Stamp),
+		note.Timestamp.Format(time.Stamp) + "  ",
 		note.Text,
 	}
 }

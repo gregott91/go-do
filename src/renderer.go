@@ -81,7 +81,7 @@ func GenerateInput(label string, enterFunc func(input InputField), closeFunc fun
 }
 
 // GenerateTable generates a tview Table
-func GenerateTable() Table {
+func GenerateTable(firstCellColor uint64) Table {
 	table := tview.NewTable().
 		SetBorders(false)
 
@@ -93,7 +93,7 @@ func GenerateTable() Table {
 			table.SetSelectable(false, false)
 		})
 
-	return WrapTable(table)
+	return WrapTable(table, firstCellColor)
 }
 
 // AppendRowToTable adds a row to a tview Table
@@ -112,12 +112,17 @@ func PrependRowToTable(table Table, rowValues ...string) {
 
 func setRowCells(table Table, row int, rowValues ...string) {
 	for column, cell := range rowValues {
-		setTableCell(table, row, column, cell)
+		color := uint64(tcell.ColorWhite)
+		if column == 0 {
+			color = table.Options.FirstCellColor
+		}
+
+		setTableCell(table, row, column, cell, color)
 	}
 }
 
-func setTableCell(table Table, row int, column int, text string) {
+func setTableCell(table Table, row int, column int, text string, color uint64) {
 	table.Inner.SetCell(row, column,
 		tview.NewTableCell(text).
-			SetTextColor(tcell.ColorWhite))
+			SetTextColor(tcell.Color(color)))
 }

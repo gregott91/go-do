@@ -1,15 +1,29 @@
 package godo
 
-import "github.com/rivo/tview"
+import (
+	"github.com/gdamore/tcell/v2"
+	"github.com/rivo/tview"
+)
 
 // Application wraps tview.Application
 type Application struct {
 	Inner *tview.Application
 }
 
+const (
+	// WrapperColorOlive represents an olive color
+	WrapperColorOlive = uint64(tcell.ColorOlive)
+)
+
+// TableOptions represents options for a tview.Table
+type TableOptions struct {
+	FirstCellColor uint64
+}
+
 // Table wraps tview.Table
 type Table struct {
-	Inner *tview.Table
+	Inner   *tview.Table
+	Options TableOptions
 }
 
 // Grid wraps tview.Grid
@@ -28,8 +42,11 @@ type InputField struct {
 }
 
 // WrapTable wraps the tview table in a struct
-func WrapTable(table *tview.Table) Table {
-	return Table{Inner: table}
+func WrapTable(table *tview.Table, firstCellColor uint64) Table {
+	return Table{
+		Inner:   table,
+		Options: TableOptions{FirstCellColor: uint64(firstCellColor)},
+	}
 }
 
 // WrapGrid wraps the tview grid in a struct
