@@ -1,0 +1,21 @@
+# Go-Do
+
+## Installation
+This package is distributed with a custom scoop bucket.
+
+To install, run the following commands in Powershell:
+    iwr -useb get.scoop.sh | iex   # installs scoop
+    scoop bucket add gregott91 https://github.com/gregott91/go-do.git   # adds a custom scoop bucket
+    scoop install go-do
+
+## Running
+To run, simply run `go-do` from powershell.
+
+Optionally, if you have AutoHotKey installed, double-click either of the .ahk files. Following that, Windows key + Z will run go-do.
+* run-godo-cmd will run go-do in a command line window.
+* run-godo-wt will run go-do in a windows terminal window.
+
+## Usage
+To switch between text input and the list, type Ctrl+S
+When focused on the list, type Ctrl+D to delete an entry
+No matter the focus, hit Ctrl+C or the Escape key to exit
