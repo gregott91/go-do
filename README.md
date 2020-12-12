@@ -4,6 +4,7 @@
 This package is distributed with a custom scoop bucket.
 
 To install, run the following commands in Powershell:
+
     iwr -useb get.scoop.sh | iex   # installs scoop
     scoop bucket add gregott91 https://github.com/gregott91/go-do.git   # adds a custom scoop bucket
     scoop install go-do
