@@ -16,6 +16,9 @@ const (
 	// KeyCtrlS represents Ctrl+S
 	KeyCtrlS = uint64(tcell.KeyCtrlS)
 
+	// KeyCtrlD represents Ctrl+D
+	KeyCtrlD = uint64(tcell.KeyCtrlD)
+
 	// KeyEscape represents Escape
 	KeyEscape = uint64(tcell.KeyEscape)
 )

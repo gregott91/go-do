@@ -78,6 +78,15 @@ func InsertNote(db *bolt.DB, note *Note) (int, error) {
 	return insertID, err
 }
 
+// DeleteNote deletes a note from the DB
+func DeleteNote(db *bolt.DB, id int) error {
+	return db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte(noteBucketName))
+
+		return b.Delete(itob(id))
+	})
+}
+
 // itob returns an 8-byte big endian representation of v.
 func itob(v int) []byte {
 	b := make([]byte, 8)

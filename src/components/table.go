@@ -122,3 +122,22 @@ func (table *Table) setTableCell(referenceValue int, row int, column int, text s
 
 	table.Inner.SetCell(row, column, cell)
 }
+
+// GetSelectedRow gets the selected row
+func (table *Table) GetSelectedRow() int {
+	row, _ := table.Inner.GetSelection()
+	return row
+}
+
+// GetSelectedReference gets the reference from the selected row
+func (table *Table) GetSelectedReference() int {
+	row := table.GetSelectedRow()
+	referenceVal := table.Inner.GetCell(row, 0).GetReference()
+
+	return referenceVal.(int)
+}
+
+// RemoveRow removes the specified row
+func (table *Table) RemoveRow(row int) {
+	table.Inner.RemoveRow(row)
+}

@@ -53,6 +53,12 @@ func configureUIShortcuts(app *components.Application, input *components.InputFi
 		} else if keyCode == components.KeyEscape {
 			conn.CloseConnection()
 			app.Stop()
+		} else if keyCode == components.KeyCtrlD {
+			if notesTable.HasFocus() {
+				id := notesTable.GetSelectedReference()
+				conn.RemoveNote(id)
+				notesTable.RemoveRow(notesTable.GetSelectedRow())
+			}
 		}
 	})
 }

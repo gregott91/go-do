@@ -15,9 +15,7 @@ type Note struct {
 
 // NotesConnection maintains a connection to the DB
 type NotesConnection struct {
-	CreateNote      func(text string) (*Note, error)
-	GetNotes        func() ([]*Note, error)
-	CloseConnection func()
+	DB *bolt.DB
 }
 
 // InitializeNotesBackend creates and returns the DB
@@ -32,29 +30,34 @@ func InitializeNotesBackend() (*NotesConnection, error) {
 		return &NotesConnection{}, err
 	}
 
-	return &NotesConnection{
-		CreateNote: func(text string) (*Note, error) {
-			return CreateNote(db, text)
-		},
-		CloseConnection: func() {
-			db.Close()
-		},
-		GetNotes: func() ([]*Note, error) {
-			return GetNotes(db)
-		},
-	}, nil
+	return &NotesConnection{DB: db}, nil
 }
 
 // CreateNote creates a note in the DB
-func CreateNote(db *bolt.DB, text string) (*Note, error) {
+func (conn *NotesConnection) CreateNote(text string) (*Note, error) {
 	note := &Note{
 		Text:      text,
 		Timestamp: time.Now(),
 	}
 
-	id, err := InsertNote(db, note)
+	id, err := InsertNote(conn.DB, note)
 
 	note.ID = id
 
 	return note, err
+}
+
+// CloseConnection closes a connection to the DB
+func (conn *NotesConnection) CloseConnection() {
+	conn.DB.Close()
+}
+
+// GetNotes gets all notes from the DB
+func (conn *NotesConnection) GetNotes() ([]*Note, error) {
+	return GetNotes(conn.DB)
+}
+
+// RemoveNote removes a note from the DB
+func (conn *NotesConnection) RemoveNote(id int) error {
+	return DeleteNote(conn.DB, id)
 }
