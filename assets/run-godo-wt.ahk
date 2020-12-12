@@ -1,3 +1,3 @@
 ﻿#z::
-run, cmd.exe /c "wt D:\SourceCode\Go\go-do\go-do.exe",, Hide
+run, cmd.exe /c "wt go-do",, Hide
 return
