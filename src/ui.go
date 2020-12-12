@@ -47,6 +47,9 @@ func getNoteInput(conn *NotesConnection, notesTable *components.Table, app *comp
 	}, app)
 }
 
+// todo split up the below.
+// these should be configured individually, rather than in bulk
+// additionally, the KeyCtrlD one should be moved to table.go
 func configureUIShortcuts(app *components.Application, input *components.InputField, notesTable *components.Table, conn *NotesConnection) {
 	app.ConfigureAppShortcuts(func(keyCode uint64) {
 		if keyCode == components.KeyCtrlS {
