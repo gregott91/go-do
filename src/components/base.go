@@ -7,6 +7,9 @@ import (
 const (
 	// WrapperColorOlive represents an olive color
 	WrapperColorOlive = uint64(tcell.ColorOlive)
+
+	// WrapperColorWhite represents a white color
+	WrapperColorWhite = uint64(tcell.ColorWhite)
 )
 
 const (

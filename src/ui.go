@@ -58,8 +58,13 @@ func configureUIShortcuts(app *components.Application, input *components.InputFi
 }
 
 func getPopulatedTable(app *components.Application, conn *NotesConnection) (*components.Table, error) {
-	table := components.CreateTable(components.TableOptions{
-		FirstCellColor: components.WrapperColorOlive,
+	table := components.CreateTable([]components.CellOptions{
+		{
+			CellColor:    components.WrapperColorOlive,
+			StartPadding: 1,
+			EndPadding:   2,
+		},
+		components.GetDefaultCellOptions(),
 	}, app)
 
 	notes, err := conn.GetNotes()
@@ -73,7 +78,7 @@ func getPopulatedTable(app *components.Application, conn *NotesConnection) (*com
 
 func getRowFromNote(note *Note) []string {
 	return []string{
-		" " + note.Timestamp.Format(time.Stamp) + "  ",
+		note.Timestamp.Format(time.Stamp),
 		note.Text,
 	}
 }

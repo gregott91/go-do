@@ -28,6 +28,7 @@ func (app *Application) ConfigureAppShortcuts(handler func(uint64)) {
 	})
 }
 
+// Run runs the application
 func (app *Application) Run() error {
 	return app.Inner.Run()
 }

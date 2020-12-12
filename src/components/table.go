@@ -5,19 +5,22 @@ import (
 	"github.com/rivo/tview"
 )
 
-// TableOptions represents options for a tview.Table
-type TableOptions struct {
-	FirstCellColor uint64
+// CellOptions represents the rendering options for a cell
+type CellOptions struct {
+	CellColor    uint64
+	StartPadding int
+	EndPadding   int
 }
 
 // Table wraps tview.Table
 type Table struct {
 	Inner   *tview.Table
-	Options TableOptions
 	Parent  *tview.Application
+	Options []CellOptions
 }
 
-func CreateTable(opts TableOptions, app *Application) *Table {
+// CreateTable creates a table with the given options
+func CreateTable(opts []CellOptions, app *Application) *Table {
 	return &Table{
 		Inner: tview.NewTable().
 			SetBorders(false).
@@ -47,8 +50,9 @@ func (table *Table) DisableSelection() {
 	table.Inner.SetSelectable(false, false)
 }
 
-func (component *Table) AddToGrid(grid *Grid, row int, column int) {
-	grid.Inner.AddItem(component.Inner, row, column, 1, 1, 0, 0, false)
+// AddToGrid adds this table to a grid
+func (table *Table) AddToGrid(grid *Grid, row int, column int) {
+	grid.Inner.AddItem(table.Inner, row, column, 1, 1, 0, 0, false)
 }
 
 // AppendRow adds a row to a tview Table
@@ -67,17 +71,36 @@ func (table *Table) PrependRow(rowValues ...string) {
 
 func (table *Table) setRowCells(row int, rowValues ...string) {
 	for column, cell := range rowValues {
-		color := uint64(tcell.ColorWhite)
-		if column == 0 {
-			color = table.Options.FirstCellColor
-		}
-
+		opts := table.Options[column]
 		expand := false
 		if column == (len(rowValues) - 1) {
-			expand = true
+			expand = true // todo move this to options
 		}
 
-		table.setTableCell(row, column, cell, color, expand)
+		table.setTableCell(row, column, getCellText(cell, opts.StartPadding, opts.EndPadding), opts.CellColor, expand)
+	}
+}
+
+func getCellText(originalText string, startPadding int, endPadding int) string {
+	paddedText := originalText
+
+	for i := 0; i < startPadding; i++ {
+		paddedText = " " + paddedText
+	}
+
+	for i := 0; i < endPadding; i++ {
+		paddedText = paddedText + " "
+	}
+
+	return paddedText
+}
+
+// GetDefaultCellOptions gets the default cell options
+func GetDefaultCellOptions() CellOptions {
+	return CellOptions{
+		CellColor:    WrapperColorWhite,
+		StartPadding: 0,
+		EndPadding:   0,
 	}
 }
 

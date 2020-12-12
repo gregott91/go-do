@@ -8,6 +8,7 @@ type Label struct {
 	Parent *tview.Application
 }
 
+// CreateLabel creates a label with the given text
 func CreateLabel(text string, app *Application) *Label {
 	return &Label{
 		Inner: tview.NewTextView().
@@ -17,6 +18,7 @@ func CreateLabel(text string, app *Application) *Label {
 	}
 }
 
+// AddToGrid adds this label to a grid
 func (component *Label) AddToGrid(grid *Grid, row int, column int) {
 	grid.Inner.AddItem(component.Inner, row, column, 1, 1, 0, 0, false)
 }

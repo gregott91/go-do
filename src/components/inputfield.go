@@ -5,6 +5,7 @@ import (
 	"github.com/rivo/tview"
 )
 
+// InputOptions represents the UI options for the input field
 type InputOptions struct {
 	Label        string
 	LabelPadding int
@@ -69,6 +70,7 @@ func (input *InputField) SetFocus() {
 	input.Parent.SetFocus(input.Inner)
 }
 
-func (component *InputField) AddToGrid(grid *Grid, row int, column int) {
-	grid.Inner.AddItem(component.Inner, row, column, 1, 1, 0, 0, false)
+// AddToGrid adds this component to a grid
+func (input *InputField) AddToGrid(grid *Grid, row int, column int) {
+	grid.Inner.AddItem(input.Inner, row, column, 1, 1, 0, 0, false)
 }
