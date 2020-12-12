@@ -10,23 +10,18 @@ import (
 func ConfigureUI(conn *NotesConnection) error {
 	app := components.CreateApplication()
 
-	// todo handle error
-	previousNotesTable, _ := getPopulatedTable(app, conn)
+	previousNotesTable, err := getPopulatedTable(app, conn)
+
+	if err != nil {
+		return err
+	}
 
 	previousNotesGrid := components.CreateGrid(components.GetDefaultGridOptions(false), app)
 	label := components.CreateLabel("Previous Notes", app)
 	label.AddToGrid(previousNotesGrid, 0, 0)
 	previousNotesTable.AddToGrid(previousNotesGrid, 1, 0)
 
-	noteInput := components.CreateInputField(components.InputOptions{
-		Label:        "Add a note:",
-		LabelPadding: 1,
-		EnterFunc: func(input components.InputField) {
-			note, _ := conn.CreateNote(input.GetText())
-			previousNotesTable.PrependRow(note.ID, getRowFromNote(note)...)
-			input.Clear()
-		},
-	}, app)
+	noteInput := getNoteInput(conn, previousNotesTable, app)
 
 	parentGrid := components.CreateGrid(components.GetDefaultGridOptions(true), app)
 	noteInput.AddToGrid(parentGrid, 0, 0)
@@ -38,6 +33,18 @@ func ConfigureUI(conn *NotesConnection) error {
 	noteInput.SetFocus()
 
 	return app.Run()
+}
+
+func getNoteInput(conn *NotesConnection, notesTable *components.Table, app *components.Application) *components.InputField {
+	return components.CreateInputField(components.InputOptions{
+		Label:        "Add a note:",
+		LabelPadding: 1,
+		EnterFunc: func(input components.InputField) {
+			note, _ := conn.CreateNote(input.GetText())
+			notesTable.PrependRow(note.ID, getRowFromNote(note)...)
+			input.Clear()
+		},
+	}, app)
 }
 
 func configureUIShortcuts(app *components.Application, input *components.InputField, notesTable *components.Table, conn *NotesConnection) {
@@ -69,8 +76,9 @@ func getPopulatedTable(app *components.Application, conn *NotesConnection) (*com
 			CellColor:    components.WrapperColorOlive,
 			StartPadding: 1,
 			EndPadding:   2,
+			ExpandCell:   false,
 		},
-		components.GetDefaultCellOptions(),
+		components.GetDefaultCellOptions(true),
 	}, app)
 
 	notes, err := conn.GetNotes()

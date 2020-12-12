@@ -10,6 +10,7 @@ type CellOptions struct {
 	CellColor    uint64
 	StartPadding int
 	EndPadding   int
+	ExpandCell   bool
 }
 
 // Table wraps tview.Table
@@ -72,10 +73,6 @@ func (table *Table) PrependRow(referenceValue int, rowValues ...string) {
 func (table *Table) setRowCells(row int, referenceValue int, rowValues ...string) {
 	for column, cell := range rowValues {
 		opts := table.Options[column]
-		expand := false
-		if column == (len(rowValues) - 1) {
-			expand = true // todo move this to options
-		}
 
 		table.setTableCell(
 			referenceValue,
@@ -83,7 +80,7 @@ func (table *Table) setRowCells(row int, referenceValue int, rowValues ...string
 			column,
 			getCellText(cell, opts.StartPadding, opts.EndPadding),
 			opts.CellColor,
-			expand,
+			opts.ExpandCell,
 		)
 	}
 }
@@ -103,11 +100,12 @@ func getCellText(originalText string, startPadding int, endPadding int) string {
 }
 
 // GetDefaultCellOptions gets the default cell options
-func GetDefaultCellOptions() CellOptions {
+func GetDefaultCellOptions(expand bool) CellOptions {
 	return CellOptions{
 		CellColor:    WrapperColorWhite,
 		StartPadding: 0,
 		EndPadding:   0,
+		ExpandCell:   expand,
 	}
 }
 
