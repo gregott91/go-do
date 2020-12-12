@@ -2,6 +2,7 @@ package godo
 
 import (
 	"go-do/src/components"
+	"sort"
 	"time"
 )
 
@@ -68,7 +69,7 @@ func getPopulatedTable(app *components.Application, conn *NotesConnection) (*com
 	}, app)
 
 	notes, err := conn.GetNotes()
-
+	sort.Sort(byAge(notes))
 	for _, element := range notes {
 		table.AppendRow(getRowFromNote(element)...)
 	}
