@@ -109,7 +109,7 @@ func (table *Table) setTableCell(row int, column int, text string, color uint64,
 		SetTextColor(tcell.Color(color))
 
 	if expand {
-		cell = cell.SetExpansion(0)
+		cell = cell.SetExpansion(100)
 	}
 
 	table.Inner.SetCell(row, column, cell)
