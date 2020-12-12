@@ -10,7 +10,6 @@ type InputOptions struct {
 	Label        string
 	LabelPadding int
 	EnterFunc    func(input InputField)
-	CloseFunc    func()
 }
 
 // InputField wraps tview.InputField
@@ -40,8 +39,6 @@ func CreateInputField(opts InputOptions, app *Application) *InputField {
 		switch key {
 		case tcell.KeyEnter:
 			opts.EnterFunc(wrapped)
-		case tcell.KeyEscape:
-			opts.CloseFunc()
 		}
 	}
 

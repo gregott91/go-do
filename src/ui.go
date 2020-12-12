@@ -23,12 +23,8 @@ func ConfigureUI(conn *NotesConnection) error {
 		LabelPadding: 1,
 		EnterFunc: func(input components.InputField) {
 			note, _ := conn.CreateNote(input.GetText())
-			previousNotesTable.PrependRow(getRowFromNote(note)...)
+			previousNotesTable.PrependRow(note.ID, getRowFromNote(note)...)
 			input.Clear()
-		},
-		CloseFunc: func() {
-			conn.CloseConnection()
-			app.Stop()
 		},
 	}, app)
 
@@ -36,7 +32,7 @@ func ConfigureUI(conn *NotesConnection) error {
 	noteInput.AddToGrid(parentGrid, 0, 0)
 	previousNotesGrid.AddToGrid(parentGrid, 1, 0)
 
-	configureUIShortcuts(app, noteInput, previousNotesTable)
+	configureUIShortcuts(app, noteInput, previousNotesTable, conn)
 
 	parentGrid.SetRoot()
 	noteInput.SetFocus()
@@ -44,7 +40,7 @@ func ConfigureUI(conn *NotesConnection) error {
 	return app.Run()
 }
 
-func configureUIShortcuts(app *components.Application, input *components.InputField, notesTable *components.Table) {
+func configureUIShortcuts(app *components.Application, input *components.InputField, notesTable *components.Table, conn *NotesConnection) {
 	app.ConfigureAppShortcuts(func(keyCode uint64) {
 		if keyCode == components.KeyCtrlS {
 			if input.HasFocus() {
@@ -54,6 +50,9 @@ func configureUIShortcuts(app *components.Application, input *components.InputFi
 				notesTable.DisableSelection()
 				input.SetFocus()
 			}
+		} else if keyCode == components.KeyEscape {
+			conn.CloseConnection()
+			app.Stop()
 		}
 	})
 }
@@ -71,7 +70,7 @@ func getPopulatedTable(app *components.Application, conn *NotesConnection) (*com
 	notes, err := conn.GetNotes()
 	sort.Sort(byAge(notes))
 	for _, element := range notes {
-		table.AppendRow(getRowFromNote(element)...)
+		table.AppendRow(element.ID, getRowFromNote(element)...)
 	}
 
 	return table, err

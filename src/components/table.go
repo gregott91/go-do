@@ -56,20 +56,20 @@ func (table *Table) AddToGrid(grid *Grid, row int, column int) {
 }
 
 // AppendRow adds a row to a tview Table
-func (table *Table) AppendRow(rowValues ...string) {
+func (table *Table) AppendRow(referenceValue int, rowValues ...string) {
 	row := table.Inner.GetRowCount()
 
-	table.setRowCells(row, rowValues...)
+	table.setRowCells(row, referenceValue, rowValues...)
 }
 
 // PrependRow adds a value to a tview Table
-func (table *Table) PrependRow(rowValues ...string) {
+func (table *Table) PrependRow(referenceValue int, rowValues ...string) {
 	table.Inner.InsertRow(0)
 
-	table.setRowCells(0, rowValues...)
+	table.setRowCells(0, referenceValue, rowValues...)
 }
 
-func (table *Table) setRowCells(row int, rowValues ...string) {
+func (table *Table) setRowCells(row int, referenceValue int, rowValues ...string) {
 	for column, cell := range rowValues {
 		opts := table.Options[column]
 		expand := false
@@ -77,7 +77,14 @@ func (table *Table) setRowCells(row int, rowValues ...string) {
 			expand = true // todo move this to options
 		}
 
-		table.setTableCell(row, column, getCellText(cell, opts.StartPadding, opts.EndPadding), opts.CellColor, expand)
+		table.setTableCell(
+			referenceValue,
+			row,
+			column,
+			getCellText(cell, opts.StartPadding, opts.EndPadding),
+			opts.CellColor,
+			expand,
+		)
 	}
 }
 
@@ -104,8 +111,9 @@ func GetDefaultCellOptions() CellOptions {
 	}
 }
 
-func (table *Table) setTableCell(row int, column int, text string, color uint64, expand bool) {
+func (table *Table) setTableCell(referenceValue int, row int, column int, text string, color uint64, expand bool) {
 	cell := tview.NewTableCell(text).
+		SetReference(referenceValue).
 		SetTextColor(tcell.Color(color))
 
 	if expand {

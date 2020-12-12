@@ -15,6 +15,9 @@ const (
 const (
 	// KeyCtrlS represents Ctrl+S
 	KeyCtrlS = uint64(tcell.KeyCtrlS)
+
+	// KeyEscape represents Escape
+	KeyEscape = uint64(tcell.KeyEscape)
 )
 
 // BaseComponent is equvalent to the tview primitive
