@@ -6,37 +6,59 @@ import (
 	"time"
 )
 
-// ConfigureUI configures the TUI
-func ConfigureUI(conn *NotesConnection, config *Config) error {
-	app := components.CreateApplication()
+type shortcutConfig struct {
+	config     *Config
+	observable *ShortcutObservable
+}
 
-	previousNotesTable, err := getPopulatedTable(app, conn)
+// ConfigureUI configures the TUI
+func ConfigureUI(conn *NotesConnection, config *Config) (*components.Application, error) {
+	shortcuts := &shortcutConfig{config: config, observable: &ShortcutObservable{Handlers: make(map[uint64]func())}}
+
+	app := createApplication(shortcuts, conn)
+
+	previousNotesTable, err := getPopulatedTable(app, conn, shortcuts)
 
 	if err != nil {
-		return err
+		return &components.Application{}, err
 	}
 
-	previousNotesGrid := components.CreateGrid(components.GetDefaultGridOptions(false), app)
-	label := components.CreateLabel("Previous Notes", app)
-	label.AddToGrid(previousNotesGrid, 0, 0)
-	previousNotesTable.AddToGrid(previousNotesGrid, 1, 0)
-
-	noteInput := getNoteInput(conn, previousNotesTable, app)
+	previousNotesGrid := getNoteGrid(app, previousNotesTable)
+	noteInput := getNoteInput(conn, previousNotesTable, app, shortcuts)
 
 	parentGrid := components.CreateGrid(components.GetDefaultGridOptions(true), app)
 	noteInput.AddToGrid(parentGrid, 0, 0)
 	previousNotesGrid.AddToGrid(parentGrid, 1, 0)
 
-	configureUIShortcuts(app, noteInput, previousNotesTable, conn, config)
-
 	parentGrid.SetRoot()
 	noteInput.SetFocus()
 
-	return app.Run()
+	return app, app.Run()
 }
 
-func getNoteInput(conn *NotesConnection, notesTable *components.Table, app *components.Application) *components.InputField {
-	return components.CreateInputField(components.InputOptions{
+func createApplication(shortcuts *shortcutConfig, conn *NotesConnection) *components.Application {
+	app := components.CreateApplication()
+	app.ConfigureInputCapture(shortcuts.observable.Trigger)
+
+	shortcuts.observable.Register(shortcuts.config.Shortcuts.Close, func() {
+		conn.CloseConnection()
+		app.Stop()
+	})
+
+	return app
+}
+
+func getNoteGrid(app *components.Application, previousNotesTable *components.Table) *components.Grid {
+	previousNotesGrid := components.CreateGrid(components.GetDefaultGridOptions(false), app)
+	label := components.CreateLabel("Previous Notes", app)
+	label.AddToGrid(previousNotesGrid, 0, 0)
+	previousNotesTable.AddToGrid(previousNotesGrid, 1, 0)
+
+	return previousNotesGrid
+}
+
+func getNoteInput(conn *NotesConnection, notesTable *components.Table, app *components.Application, shortcuts *shortcutConfig) *components.InputField {
+	field := components.CreateInputField(components.InputOptions{
 		Label:        "Add a note:",
 		LabelPadding: 1,
 		EnterFunc: func(input components.InputField) {
@@ -45,35 +67,21 @@ func getNoteInput(conn *NotesConnection, notesTable *components.Table, app *comp
 			input.Clear()
 		},
 	}, app)
-}
 
-// todo split up the below.
-// these should be configured individually, rather than in bulk
-// additionally, the KeyCtrlD one should be moved to table.go
-func configureUIShortcuts(app *components.Application, input *components.InputField, notesTable *components.Table, conn *NotesConnection, config *Config) {
-	app.ConfigureAppShortcuts(func(keyCode uint64) {
-		if keyCode == config.Shortcuts.Switch {
-			if input.HasFocus() {
-				notesTable.EnableSelection()
-				notesTable.SetFocus()
-			} else if notesTable.HasFocus() {
-				notesTable.DisableSelection()
-				input.SetFocus()
-			}
-		} else if keyCode == config.Shortcuts.Close {
-			conn.CloseConnection()
-			app.Stop()
-		} else if keyCode == config.Shortcuts.Delete {
-			if notesTable.HasFocus() {
-				id := notesTable.GetSelectedReference()
-				conn.RemoveNote(id)
-				notesTable.RemoveRow(notesTable.GetSelectedRow())
-			}
+	shortcuts.observable.Register(shortcuts.config.Shortcuts.Switch, func() {
+		if field.HasFocus() {
+			notesTable.EnableSelection()
+			notesTable.SetFocus()
+		} else if notesTable.HasFocus() {
+			notesTable.DisableSelection()
+			field.SetFocus()
 		}
 	})
+
+	return field
 }
 
-func getPopulatedTable(app *components.Application, conn *NotesConnection) (*components.Table, error) {
+func getPopulatedTable(app *components.Application, conn *NotesConnection, shortcuts *shortcutConfig) (*components.Table, error) {
 	table := components.CreateTable([]components.CellOptions{
 		{
 			CellColor:    components.WrapperColorOlive,
@@ -89,6 +97,14 @@ func getPopulatedTable(app *components.Application, conn *NotesConnection) (*com
 	for _, element := range notes {
 		table.AppendRow(element.ID, getRowFromNote(element)...)
 	}
+
+	shortcuts.observable.Register(shortcuts.config.Shortcuts.Delete, func() {
+		if table.HasFocus() {
+			id := table.GetSelectedReference()
+			conn.RemoveNote(id)
+			table.RemoveRow(table.GetSelectedRow())
+		}
+	})
 
 	return table, err
 }

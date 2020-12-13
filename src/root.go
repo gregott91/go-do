@@ -7,18 +7,17 @@ func StartApp() error {
 	}
 
 	conn, err := InitializeNotesBackend()
-
 	if err != nil {
 		return err
 	}
 
 	config, err := GetConfig()
-
 	if err != nil {
 		return err
 	}
 
-	if err = ConfigureUI(conn, &config); err != nil {
+	_, err = ConfigureUI(conn, &config)
+	if err != nil {
 		return err
 	}
 

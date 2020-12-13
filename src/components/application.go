@@ -21,7 +21,7 @@ func (app *Application) Stop() {
 }
 
 // ConfigureAppShortcuts configues the shortcuts for the application
-func (app *Application) ConfigureAppShortcuts(handler func(uint64)) {
+func (app *Application) ConfigureInputCapture(handler func(uint64)) {
 	app.Inner.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		handler(uint64(event.Key()))
 		return event
