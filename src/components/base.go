@@ -1,6 +1,6 @@
 package components
 
-import "github.com/gdamore/tcell"
+import "github.com/gdamore/tcell/v2"
 
 // BaseComponent is equvalent to the tview primitive
 type BaseComponent interface {
