@@ -17,7 +17,12 @@ Optionally, if you have AutoHotKey installed, double-click either of the .ahk fi
 * run-godo-wt will run go-do in a windows terminal window.
 
 ## Usage
+
+### Basic
 To switch between text input and the list, type Ctrl+S
 After typing a note, hit Enter to add it to the list
 When focused on the list, type Ctrl+D to delete an entry
 No matter the focus, hit Ctrl+C or the Escape key to exit
+
+### Configuration
+To change keyboard shortcuts, open the go-do.config.json file
