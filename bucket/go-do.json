@@ -5,7 +5,7 @@
     "license": "MIT",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/gregott91/go-do/releases/download/0.0.2/go-do.exe",
+            "url": "https://github.com/gregott91/go-do/releases/download/0.0.3/go-do.exe",
             "hash": "04ED380619322920F1129348B41F8515A7DECFE7D54937BA6604D73316EE6696"
         }
     },
