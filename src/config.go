@@ -10,9 +10,9 @@ const configFileName = "go-do.config.json"
 
 // ShortcutConfig is the configuration for shortcuts
 type ShortcutConfig struct {
-	Switch uint64
-	Delete uint64
-	Close  uint64
+	Switch ShortcutKey
+	Delete ShortcutKey
+	Close  ShortcutKey
 }
 
 // Config is the master config

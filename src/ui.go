@@ -23,12 +23,17 @@ func ConfigureUI(conn *NotesConnection, config *Config) (*components.Application
 		return &components.Application{}, err
 	}
 
-	previousNotesGrid := getNoteGrid(app, previousNotesTable)
 	noteInput := getNoteInput(conn, previousNotesTable, app, shortcuts)
 
-	parentGrid := components.CreateGrid(components.GetDefaultGridOptions(true), app)
+	parentGrid := components.CreateGrid(components.GridOptions{
+		Rows:         []int{0, 1},
+		Columns:      []int{0},
+		HasBorders:   true,
+		HasHeaderRow: true,
+	}, app)
 	noteInput.AddToGrid(parentGrid, 0, 0)
-	previousNotesGrid.AddToGrid(parentGrid, 1, 0)
+	getNoteGrid(app, previousNotesTable).AddToGrid(parentGrid, 1, 0)
+	getGridFooter(app, shortcuts).AddToGrid(parentGrid, 2, 0)
 
 	parentGrid.SetRoot()
 	noteInput.SetFocus()
@@ -40,7 +45,7 @@ func createApplication(shortcuts *shortcutConfig, conn *NotesConnection) *compon
 	app := components.CreateApplication()
 	app.ConfigureInputCapture(shortcuts.observable.Trigger)
 
-	shortcuts.observable.Register(shortcuts.config.Shortcuts.Close, func() {
+	shortcuts.observable.Register(shortcuts.config.Shortcuts.Close.Code, func() {
 		conn.CloseConnection()
 		app.Stop()
 	})
@@ -50,11 +55,44 @@ func createApplication(shortcuts *shortcutConfig, conn *NotesConnection) *compon
 
 func getNoteGrid(app *components.Application, previousNotesTable *components.Table) *components.Grid {
 	previousNotesGrid := components.CreateGrid(components.GetDefaultGridOptions(false), app)
-	label := components.CreateLabel("Previous Notes", app)
+	label := components.CreateLabel(components.LabelOptions{Text: "Previous Notes", Center: true}, app)
 	label.AddToGrid(previousNotesGrid, 0, 0)
 	previousNotesTable.AddToGrid(previousNotesGrid, 1, 0)
 
 	return previousNotesGrid
+}
+
+func getGridFooter(app *components.Application, shortcuts *shortcutConfig) *components.Grid {
+	grid := components.CreateGrid(components.GridOptions{
+		Rows:         []int{0},
+		Columns:      []int{0, 0, 0},
+		HasBorders:   false,
+		HasHeaderRow: false,
+	}, app)
+
+	components.CreateLabel(
+		getFooterLabelOptions(
+			"Switch from input to list",
+			shortcuts.config.Shortcuts.Switch.DisplayValue), app).
+		AddToGrid(grid, 0, 0)
+
+	components.CreateLabel(
+		getFooterLabelOptions(
+			"Delete a row",
+			shortcuts.config.Shortcuts.Delete.DisplayValue), app).
+		AddToGrid(grid, 0, 1)
+
+	components.CreateLabel(
+		getFooterLabelOptions(
+			"Close the application",
+			shortcuts.config.Shortcuts.Close.DisplayValue), app).
+		AddToGrid(grid, 0, 2)
+
+	return grid
+}
+
+func getFooterLabelOptions(shortcutName string, shortcutValue string) components.LabelOptions {
+	return components.LabelOptions{Text: shortcutName + ": " + shortcutValue, Center: true}
 }
 
 func getNoteInput(conn *NotesConnection, notesTable *components.Table, app *components.Application, shortcuts *shortcutConfig) *components.InputField {
@@ -68,7 +106,7 @@ func getNoteInput(conn *NotesConnection, notesTable *components.Table, app *comp
 		},
 	}, app)
 
-	shortcuts.observable.Register(shortcuts.config.Shortcuts.Switch, func() {
+	shortcuts.observable.Register(shortcuts.config.Shortcuts.Switch.Code, func() {
 		if field.HasFocus() {
 			notesTable.EnableSelection()
 			notesTable.SetFocus()
@@ -98,7 +136,7 @@ func getPopulatedTable(app *components.Application, conn *NotesConnection, short
 		table.AppendRow(element.ID, getRowFromNote(element)...)
 	}
 
-	shortcuts.observable.Register(shortcuts.config.Shortcuts.Delete, func() {
+	shortcuts.observable.Register(shortcuts.config.Shortcuts.Delete.Code, func() {
 		if table.HasFocus() {
 			id := table.GetSelectedReference()
 			conn.RemoveNote(id)

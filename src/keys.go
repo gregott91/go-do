@@ -1,6 +1,7 @@
 package godo
 
-type shortcutKey struct {
+// ShortcutKey is the key value for a shortcut
+type ShortcutKey struct {
 	ConfigValue  string
 	DisplayValue string
 	Code         uint64
@@ -16,23 +17,23 @@ const (
 )
 
 // GetConfigToCodeMap returns a map from key config values to key codes
-func GetConfigToCodeMap() map[string]uint64 {
-	keyMap := make(map[string]uint64)
+func GetConfigToCodeMap() map[string]ShortcutKey {
+	keyMap := make(map[string]ShortcutKey)
 	keys := getAllShortcutKeys()
 
 	for _, key := range keys {
-		keyMap[key.ConfigValue] = key.Code
+		keyMap[key.ConfigValue] = key
 	}
 
 	return keyMap
 }
 
-func getAllShortcutKeys() []shortcutKey {
-	newKey := func(value string, code uint64) shortcutKey {
-		return shortcutKey{ConfigValue: value, DisplayValue: value, Code: code}
+func getAllShortcutKeys() []ShortcutKey {
+	newKey := func(value string, code uint64) ShortcutKey {
+		return ShortcutKey{ConfigValue: value, DisplayValue: value, Code: code}
 	}
 
-	return []shortcutKey{
+	return []ShortcutKey{
 		newKey("CtrlA", 1),
 		newKey("CtrlB", 2),
 		newKey("CtrlC", 3),
