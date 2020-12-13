@@ -12,7 +12,13 @@ func StartApp() error {
 		return err
 	}
 
-	if err = ConfigureUI(conn); err != nil {
+	config, err := GetConfig()
+
+	if err != nil {
+		return err
+	}
+
+	if err = ConfigureUI(conn, &config); err != nil {
 		return err
 	}
 

@@ -1,27 +1,6 @@
 package components
 
-import (
-	"github.com/gdamore/tcell/v2"
-)
-
-const (
-	// WrapperColorOlive represents an olive color
-	WrapperColorOlive = uint64(tcell.ColorOlive)
-
-	// WrapperColorWhite represents a white color
-	WrapperColorWhite = uint64(tcell.ColorWhite)
-)
-
-const (
-	// KeyCtrlS represents Ctrl+S
-	KeyCtrlS = uint64(tcell.KeyCtrlS)
-
-	// KeyCtrlD represents Ctrl+D
-	KeyCtrlD = uint64(tcell.KeyCtrlD)
-
-	// KeyEscape represents Escape
-	KeyEscape = uint64(tcell.KeyEscape)
-)
+import "github.com/gdamore/tcell"
 
 // BaseComponent is equvalent to the tview primitive
 type BaseComponent interface {
@@ -30,3 +9,11 @@ type BaseComponent interface {
 	AddToGrid(grid *Grid, row int, column int)
 	SetRoot()
 }
+
+const (
+	// WrapperColorOlive represents an olive color
+	WrapperColorOlive = uint64(tcell.ColorOlive)
+
+	// WrapperColorWhite represents a white color
+	WrapperColorWhite = uint64(tcell.ColorWhite)
+)

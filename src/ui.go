@@ -7,7 +7,7 @@ import (
 )
 
 // ConfigureUI configures the TUI
-func ConfigureUI(conn *NotesConnection) error {
+func ConfigureUI(conn *NotesConnection, config *Config) error {
 	app := components.CreateApplication()
 
 	previousNotesTable, err := getPopulatedTable(app, conn)
@@ -27,7 +27,7 @@ func ConfigureUI(conn *NotesConnection) error {
 	noteInput.AddToGrid(parentGrid, 0, 0)
 	previousNotesGrid.AddToGrid(parentGrid, 1, 0)
 
-	configureUIShortcuts(app, noteInput, previousNotesTable, conn)
+	configureUIShortcuts(app, noteInput, previousNotesTable, conn, config)
 
 	parentGrid.SetRoot()
 	noteInput.SetFocus()
@@ -50,9 +50,9 @@ func getNoteInput(conn *NotesConnection, notesTable *components.Table, app *comp
 // todo split up the below.
 // these should be configured individually, rather than in bulk
 // additionally, the KeyCtrlD one should be moved to table.go
-func configureUIShortcuts(app *components.Application, input *components.InputField, notesTable *components.Table, conn *NotesConnection) {
+func configureUIShortcuts(app *components.Application, input *components.InputField, notesTable *components.Table, conn *NotesConnection, config *Config) {
 	app.ConfigureAppShortcuts(func(keyCode uint64) {
-		if keyCode == components.KeyCtrlS {
+		if keyCode == config.Shortcuts.Switch {
 			if input.HasFocus() {
 				notesTable.EnableSelection()
 				notesTable.SetFocus()
@@ -60,10 +60,10 @@ func configureUIShortcuts(app *components.Application, input *components.InputFi
 				notesTable.DisableSelection()
 				input.SetFocus()
 			}
-		} else if keyCode == components.KeyEscape {
+		} else if keyCode == config.Shortcuts.Close {
 			conn.CloseConnection()
 			app.Stop()
-		} else if keyCode == components.KeyCtrlD {
+		} else if keyCode == config.Shortcuts.Delete {
 			if notesTable.HasFocus() {
 				id := notesTable.GetSelectedReference()
 				conn.RemoveNote(id)
