@@ -18,6 +18,7 @@ type Label struct {
 func CreateLabel(opts LabelOptions, app *Application) *Label {
 	label := &Label{
 		Inner: tview.NewTextView().
+			SetDynamicColors(true).
 			SetText(opts.Text),
 		Parent: app.Inner,
 	}

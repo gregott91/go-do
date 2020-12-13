@@ -72,7 +72,7 @@ func getGridFooter(app *components.Application, shortcuts *shortcutConfig) *comp
 
 	components.CreateLabel(
 		getFooterLabelOptions(
-			"Switch from input to list",
+			"Switch between input/list",
 			shortcuts.config.Shortcuts.Switch.DisplayValue), app).
 		AddToGrid(grid, 0, 0)
 
@@ -92,7 +92,9 @@ func getGridFooter(app *components.Application, shortcuts *shortcutConfig) *comp
 }
 
 func getFooterLabelOptions(shortcutName string, shortcutValue string) components.LabelOptions {
-	return components.LabelOptions{Text: shortcutName + ": " + shortcutValue, Center: true}
+	return components.LabelOptions{
+		Text:   "[gray]" + shortcutName + ": " + shortcutValue,
+		Center: true}
 }
 
 func getNoteInput(conn *NotesConnection, notesTable *components.Table, app *components.Application, shortcuts *shortcutConfig) *components.InputField {
