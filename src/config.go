@@ -37,11 +37,17 @@ func GetConfig() (Config, error) {
 	var config internalConfig
 	var err error
 
-	if _, err = os.Stat(configFileName); os.IsNotExist(err) {
+	configFilePath, err := ConcatenateFileWithCurrentExeDir(configFileName)
+
+	if err != nil {
+		return Config{}, err
+	}
+
+	if _, err = os.Stat(configFilePath); os.IsNotExist(err) {
 		config = getDefaultConfig()
-		err = createConfigFile(config)
+		err = createConfigFile(configFilePath, config)
 	} else {
-		dat, err := ioutil.ReadFile(configFileName)
+		dat, err := ioutil.ReadFile(configFilePath)
 
 		if err != nil {
 			return Config{}, err
@@ -67,8 +73,8 @@ func convertConfig(internal internalConfig) Config {
 	}
 }
 
-func createConfigFile(config internalConfig) error {
-	f, err := os.Create(configFileName)
+func createConfigFile(filePath string, config internalConfig) error {
+	f, err := os.Create(filePath)
 
 	if err != nil {
 		return err

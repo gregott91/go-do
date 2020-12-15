@@ -3,9 +3,6 @@ package godo
 import (
 	"encoding/binary"
 	"encoding/json"
-	"fmt"
-	"os"
-	"path/filepath"
 
 	"github.com/boltdb/bolt"
 )
@@ -17,14 +14,12 @@ const (
 
 // OpenDB creates and returns the DB
 func OpenDB() (*bolt.DB, error) {
-	exe, err := os.Executable()
+	dbPath, err := ConcatenateFileWithCurrentExeDir(dbName)
 	if err != nil {
 		return &bolt.DB{}, err
 	}
 
-	exePath := filepath.Dir(exe)
-
-	return bolt.Open(fmt.Sprint(exePath, os.PathSeparator, dbName), 0600, nil)
+	return bolt.Open(dbPath, 0600, nil)
 }
 
 // CreateBuckets create the mandatory buckets to be used by the DB

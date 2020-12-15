@@ -1,7 +1,10 @@
 # ChangeLog
 
+## 0.0.5 - 2020-12-14
+* Corrected config file location
+
 ## 0.0.4 - 2020-12-14
-* Added footer with keyboard shortcut descriptions
+* Corrected DB file location
 
 ## 0.0.3 - 2020-12-13
 * Added footer with keyboard shortcut descriptions
