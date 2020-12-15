@@ -1,5 +1,8 @@
 # ChangeLog
 
+## 0.0.4 - 2020-12-14
+* Added footer with keyboard shortcut descriptions
+
 ## 0.0.3 - 2020-12-13
 * Added footer with keyboard shortcut descriptions
 
