@@ -6,7 +6,7 @@
     "architecture": {
         "64bit": {
             "url": "https://github.com/gregott91/go-do/releases/download/0.0.5/go-do.exe",
-            "hash": "A1A6F04643D30689A053AD8E6652C648B2A88C2C77C794E102ECB812E92E55F8"
+            "hash": "6310E5E5E1F20A54453BEAD56E9E16779AA5AF58C0E4C3E77D50AA74DEF4BBE2"
         }
     },
     "bin": "go-do.exe",

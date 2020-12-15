@@ -15,5 +15,5 @@ func ConcatenateFileWithCurrentExeDir(filename string) (string, error) {
 
 	exePath := filepath.Dir(exe)
 
-	return fmt.Sprint(exePath, os.PathSeparator, filename), nil
+	return fmt.Sprint(exePath, string(os.PathSeparator), filename), nil
 }
