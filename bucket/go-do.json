@@ -1,12 +1,12 @@
 {
-    "version": "0.0.5",
+    "version": "0.0.6",
     "description": "To-Do Note Taker",
     "homepage": "https://github.com/gregott91/go-do",
     "license": "MIT",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/gregott91/go-do/releases/download/0.0.5/go-do.exe",
-            "hash": "6310E5E5E1F20A54453BEAD56E9E16779AA5AF58C0E4C3E77D50AA74DEF4BBE2"
+            "url": "https://github.com/gregott91/go-do/releases/download/0.0.6/go-do.exe",
+            "hash": "56B3645827E45E7059FD383AADAE1B9BE85A2F703D2098A56481F924C119D27D"
         }
     },
     "bin": "go-do.exe",

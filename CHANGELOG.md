@@ -1,5 +1,8 @@
 # ChangeLog
 
+## 0.0.6 - 2020-12-17
+* Corrected config file location
+
 ## 0.0.5 - 2020-12-14
 * Corrected config file location
 
